@@ -1,0 +1,75 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.Buffer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Ejer3 {
+
+	public static void main(String[] args) throws IOException, SQLException {
+		
+		FileReader archivo = new FileReader("C:/Users/Curro/Desktop/2º DAM/Acceso a datos//Practicas/Practica_2_AAD/datos.txt");
+		
+		BufferedReader datos = new BufferedReader(archivo);
+		
+		 	String url = "jdbc:mysql://localhost:3307/practica2" + "?useUnicode=true" + "&serverTimezone=Europe/Madrid";
+	        
+	        String nombreDriver = "com.mysql.cj.jdbc.Driver";
+	        
+	        Connection con = null;
+       
+	        String user = "prac2";
+	        
+	        String pass = "qwerty";
+	        
+	        int cont = 0;
+	        
+	        try {
+	           
+	            Class.forName(nombreDriver);
+	            
+	         
+	            con = DriverManager.getConnection(url,user,pass);
+	            
+	            Statement st = con.createStatement();
+	            
+	            String linea = "";
+	            
+	    		do{
+	    			
+	    			cont++;
+	    			linea = datos.readLine();
+	    			
+	    			if(linea==null) {
+	    				
+	    			}else {
+	    				
+	    				st.executeUpdate(linea);
+	    				
+	    			}
+	    			
+	    			
+
+	    		}while(linea != null);
+	     
+	            
+	    		System.out.println("Se han introducido " + (cont-1) + " filas");
+	    		
+	        } catch (Exception e) {
+	            
+	            e.printStackTrace();
+	        }
+	        
+	        datos.close();
+	        archivo.close();
+	        con.close();
+		
+	}
+
+}
