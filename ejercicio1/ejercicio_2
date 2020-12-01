@@ -1,1 +1,74 @@
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class Ejerc7 {
+
+	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+		
+	Scanner sc = new Scanner(System.in);
+	String url = "jdbc:mysql://localhost:3307/practica2" + "?useUnicode=true" + "&serverTimezone=Europe/Madrid";
+	String preparedCall = "{ call ModificarStock (?,?) }";
+    String nombreDriver = "com.mysql.cj.jdbc.Driver";
+    String user = "root";
+    Connection con = null;
+    String pass = "admin";
+    
+    Class.forName(nombreDriver);
+    
+   System.out.println("Dime el ID del producto");
+   int idpro = sc.nextInt();
+   System.out.println("Y el nuevo stock");
+   int newstock = sc.nextInt();
+   
+	try {
+		
+		con = DriverManager.getConnection(url,user,pass);
+		
+		PreparedStatement senten = con.prepareStatement("Select stockactual from productos where id=?");
+        senten.setInt(1, idpro);
+		ResultSet rs = senten.executeQuery();
+		
+        while (rs.next()) {
+            
+              int producto = rs.getInt(1);
+              System.out.println();
+               System.out.println("Stock Antiguo: " + producto + "\n");
+              
+            }
+        
+		
+		CallableStatement cs = con.prepareCall(preparedCall);
+		cs.setInt(1, idpro);
+		cs.setInt(2, newstock);
+		cs.execute();
+		
+		senten = con.prepareStatement("Select stockactual from productos where id=?");
+        senten.setInt(1, idpro);
+        rs = senten.executeQuery();
+		
+        while (rs.next()) {
+            
+              int producto = rs.getInt(1);
+              
+               System.out.println("Stock Nuevo: " + producto + "\n");
+              
+            }
+		
+		cs.close();
+		con.close();
+		
+		
+	}catch (SQLException e) {
+		 e.printStackTrace();
+	}
+	
+	
+	}
+
+}
